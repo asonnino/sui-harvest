@@ -1,15 +1,13 @@
 use std::{collections::HashMap, path::PathBuf};
 
 use anyhow::Result;
-use sui_sdk::SuiClientBuilder;
-
+use clap::Parser;
+use colored::Colorize;
 use harvestlib::EventExtractWorker;
 use move_core_types::language_storage::StructTag;
+use statrs::statistics::Statistics;
+use sui_sdk::SuiClientBuilder;
 use sui_types::TypeTag;
-
-use colored::Colorize;
-
-use clap::Parser;
 
 /// A simple event monitor and library to consume events from the Sui blockchain.
 #[derive(Parser, Debug)]
@@ -114,6 +112,7 @@ async fn main() -> Result<()> {
     let join = tokio::spawn(async move {
         // Histogram of identifiers
         let mut histogram = HashMap::new();
+        let mut events_by_package = HashMap::new();
 
         while let Some((_summary, data)) = receiver.recv().await {
             // Update the histogram
@@ -124,6 +123,9 @@ async fn main() -> Result<()> {
                 entry.0 += 1;
                 let entry = entry.1.entry(event.type_.clone()).or_insert(0);
                 *entry += 1;
+
+                let count = events_by_package.entry(event.package_id).or_insert(0);
+                *count += 1;
             });
         }
 
@@ -157,6 +159,22 @@ async fn main() -> Result<()> {
                 );
             }
         }
+
+        println!("\nEvents by package:");
+        for (package, count) in &events_by_package {
+            println!("\x1b[34m{package:<5}\x1b[0m {count}");
+        }
+        let total_packages = events_by_package.len();
+        let average_events_by_package = events_by_package.values().sum::<usize>() / total_packages;
+        let stdev_events_by_package = events_by_package
+            .values()
+            .map(|&x| x as f64)
+            .collect::<Vec<_>>()
+            .std_dev();
+        println!(
+            "Summary: {total_packages} packages, 
+            with an average of {average_events_by_package} +- {stdev_events_by_package} events each"
+        );
     });
 
     executor.await?;

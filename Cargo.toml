@@ -27,10 +27,10 @@ path = "src/extractevents.rs"
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [dependencies]
-sui-sdk = { git = "https://github.com/mystenlabs/sui", package = "sui-sdk", branch="mainnet"}
-sui-data-ingestion-core = { git = "https://github.com/mystenlabs/sui", package = "sui-data-ingestion-core", branch="mainnet"}
-sui-types = { git = "https://github.com/mystenlabs/sui", package = "sui-types", branch="mainnet"}
-move-core-types = { git = "https://github.com/mystenlabs/sui", package = "move-core-types", branch="mainnet"}
+sui-sdk = { git = "https://github.com/mystenlabs/sui", package = "sui-sdk", branch = "mainnet" }
+sui-data-ingestion-core = { git = "https://github.com/mystenlabs/sui", package = "sui-data-ingestion-core", branch = "mainnet" }
+sui-types = { git = "https://github.com/mystenlabs/sui", package = "sui-types", branch = "mainnet" }
+move-core-types = { git = "https://github.com/mystenlabs/sui", package = "move-core-types", branch = "mainnet" }
 
 tokio = { version = "1.2", features = ["full"] }
 anyhow = "1.0"
@@ -44,6 +44,7 @@ bcs = "0.1.6"
 serde = "1.0.197"
 flate2 = "1.0.28"
 env_logger = "0.11.5"
-object_store = { version = "0.11", features = ["aws", "azure", "gcp", "http"]}
+object_store = { version = "0.11", features = ["aws", "azure", "gcp", "http"] }
 url = "2.5.2"
 rocksdb = "0.21"
+statrs = "0.18.0"
